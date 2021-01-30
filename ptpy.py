@@ -13,13 +13,10 @@ from PySide2.QtUiTools import *
 from PySide2.QtWidgets import *
 from openpyxl import load_workbook
 from uszipcode import SearchEngine
+import re
 
 
-# import PySide2
-# from PySide2.QtUiTools import QUiLoader
-# from PySide2.QtWidgets import (QApplication, QPushButton, QLineEdit, QLabel, QComboBox,QSpinBox,QRadioButton, QDoubleSpinBox, 
-#                                QCheckBox, QTableWidget, QWidget, QAction, QTextEdit, QColumnView, QFileSystemModel, QSplitter, QTreeView, QTreeWidget, QTreeWidgetItem ,QFileIconProvider)
-# from PySide2.QtCore import QFile, QObject,QDate, QDir, Qt
+
 class MySearch( QWidget ):
     def __init__(self):
         QWidget.__init__( self )
@@ -326,6 +323,7 @@ class Form( QObject ):
 
         self.window.show()
 
+
     # loads the pickle file when you type a job Number in the job number input
     def load(self):
 
@@ -339,27 +337,47 @@ class Form( QObject ):
             job = f
             self.inputJobNumber.addItem( job )
 
+
         try:
             jobInfo = pickle.load( open( wd + '\\Jobs\\' + jobNumber, "rb" ) )
             jobName = jobInfo.get( 'Job Name', '' )
+            self.inputJobName.setText( jobName )
             salesman = jobInfo.get( 'Salesman', '' )
+            self.inputSalesman.setCurrentText( salesman )
             designer = jobInfo.get( 'Designer', '' )
+            self.inputDesigner.setCurrentText( designer )
             region = jobInfo.get( 'Region', '' )
+            self.inputRegion.setText( region )
             streetName = jobInfo.get( 'Street Name', '' )
+            self.inputStreetName.setText( streetName )
             zipCode = jobInfo.get( 'Zip Code', '' )
+            self.inputZipCode.setText( zipCode )
             quotedPrice = jobInfo.get( 'Quoted Price', '' )
+            self.inputQuotedPrice.setText( quotedPrice )
             totalPrice = jobInfo.get( 'Total Price', '' )
+            self.inputTotalPrice.setText( totalPrice )
             customerCode = jobInfo.get( 'Customer Code', '' )
+            self.comboCust.setCurrentText( customerCode )
             customerName = jobInfo.get( 'Customer Name', '' )
+            self.inputCustomerCode.setText( customerCode )
             billingStreet = jobInfo.get( 'Billing Street', '' )
+
             billingCity = jobInfo.get( 'Billing City', '' )
+            self.inputBillingStreet.setText( billingStreet )
             billingZip = jobInfo.get( 'Billing Zip', '' )
+            self.inputBillingCity.setText( billingCity )
             totalBf = jobInfo.get( 'Bf', '' )
+
             phoneNumber = jobInfo.get( 'phonenumber', '' )
+
             email = jobInfo.get( 'email', '' )
+
             date = jobInfo.get( 'date', '' )
+
             po = jobInfo.get( 'po', '' )
+
             payment = jobInfo.get( 'payment', '' )
+
             creditApp = jobInfo.get( 'creditApp', '' )
             creditApproval = jobInfo.get( 'creditApproval', '' )
             receivedPo = jobInfo.get( 'creditApp', '' )
@@ -381,20 +399,7 @@ class Form( QObject ):
             taxState = jobInfo.get( 'taxState', '' )
             tax = jobInfo.get( 'tax', '' )
 
-            self.inputJobName.setText( jobName )
-            self.inputSalesman.setCurrentText( salesman )
-
-            self.inputDesigner.setCurrentText( designer )
-            self.inputRegion.setText( region )
-            self.inputStreetName.setText( streetName )
-            self.inputZipCode.setText( zipCode )
-            self.inputQuotedPrice.setText( quotedPrice )
-            self.inputTotalPrice.setText( totalPrice )
-            self.comboCust.setCurrentText( customerCode )
-            self.inputCustomerCode.setText( customerCode )
             self.inputCustomerName.setText( customerName )
-            self.inputBillingStreet.setText( billingStreet )
-            self.inputBillingCity.setText( billingCity )
             self.inputBillingZip.setText( billingZip )
             self.inputBf.setText( totalBf )
             self.inputPhoneNumber.setText( phoneNumber )
@@ -432,8 +437,12 @@ class Form( QObject ):
             if payment == 'card':
                 self.radioCard.setChecked( True )
 
-            path = 'O:\Jobs\\' + jobNumber
-            self.load_project_structure( path, self.treeWidget )
+            print( 'here' )
+            # path = 'O:\Jobs\\' + jobNumber
+            #
+            # self.load_project_structure( path, self.treeWidget )
+
+
 
 
         # if no job found
@@ -480,6 +489,122 @@ class Form( QObject ):
             self.radioCheck.setChecked( False )
             self.radioAcccount.setChecked( False )
             self.radioCash.setChecked( False )
+
+            try:
+                path = 'O:\Jobs\\' + jobNumber
+                icom_file = open(path+'\\JOB.CTL','r')
+                icom_info = icom_file.readlines()
+                self.inputJobName.setText( re.sub('[|]','',icom_info[3]) )
+                self.inputStreetName.setText(re.sub('[|]','',icom_info[4])+' '+re.sub( '[|]', '', icom_info[5] ))
+
+
+            except:
+                pyautogui.alert('Job does not exist in icommand')
+
+
+
+        except:
+            jobInfo = pickle.load( open( wd + '\\Jobs\\' + jobNumber, "rb" ) )
+            jobName = jobInfo.get( 'Job Name', '' )
+            self.inputJobName.setText( jobName )
+            salesman = jobInfo.get( 'Salesman', '' )
+            self.inputSalesman.setCurrentText( salesman )
+            designer = jobInfo.get( 'Designer', '' )
+            self.inputDesigner.setCurrentText( designer )
+            region = jobInfo.get( 'Region', '' )
+            self.inputRegion.setText( region )
+            streetName = jobInfo.get( 'Street Name', '' )
+            self.inputStreetName.setText( streetName )
+            zipCode = jobInfo.get( 'Zip Code', '' )
+            self.inputZipCode.setText( zipCode )
+            quotedPrice = jobInfo.get( 'Quoted Price', '' )
+            self.inputQuotedPrice.setText( quotedPrice )
+            totalPrice = jobInfo.get( 'Total Price', '' )
+            self.inputTotalPrice.setText( totalPrice )
+            customerCode = jobInfo.get( 'Customer Code', '' )
+            self.comboCust.setCurrentText( customerCode )
+            customerName = jobInfo.get( 'Customer Name', '' )
+            self.inputCustomerCode.setText( customerCode )
+            billingStreet = jobInfo.get( 'Billing Street', '' )
+
+            billingCity = jobInfo.get( 'Billing City', '' )
+            self.inputBillingStreet.setText( billingStreet )
+            billingZip = jobInfo.get( 'Billing Zip', '' )
+            self.inputBillingCity.setText( billingCity )
+            totalBf = jobInfo.get( 'Bf', '' )
+
+            phoneNumber = jobInfo.get( 'phonenumber', '' )
+
+            email = jobInfo.get( 'email', '' )
+
+            date = jobInfo.get( 'date', '' )
+
+            po = jobInfo.get( 'po', '' )
+
+            payment = jobInfo.get( 'payment', '' )
+
+            creditApp = jobInfo.get( 'creditApp', '' )
+            creditApproval = jobInfo.get( 'creditApproval', '' )
+            receivedPo = jobInfo.get( 'creditApp', '' )
+            poSigned = jobInfo.get( 'poSigned', '' )
+
+            addVer = jobInfo.get( 'addVer', '' )
+            plansRequested = jobInfo.get( 'plansRequested', '' )
+            plansSentToDesign = jobInfo.get( 'plansSentToDesign', '' )
+            cadReq = jobInfo.get( 'cadReq', '' )
+            cadSent = jobInfo.get( 'cadSent', '' )
+            flrSub = jobInfo.get( 'flrSub', '' )
+            flrApp = jobInfo.get( 'flrApp', '' )
+            rfSub = jobInfo.get( 'rfSub', '' )
+            rfApp = jobInfo.get( 'rfApp', '' )
+            beam = jobInfo.get( 'beam', '' )
+            hang = jobInfo.get( 'hang', '' )
+            lay = jobInfo.get( 'lay', '' )
+            jobNotes = jobInfo.get( 'jobNotes', '' )
+            taxState = jobInfo.get( 'taxState', '' )
+            tax = jobInfo.get( 'tax', '' )
+
+            self.inputCustomerName.setText( customerName )
+            self.inputBillingZip.setText( billingZip )
+            self.inputBf.setText( totalBf )
+            self.inputPhoneNumber.setText( phoneNumber )
+            self.inputEmail.setText( email )
+            self.inputDate.setText( date )
+            self.inputPo.setText( po )
+            self.lineEditCreditApp.setText( creditApp )
+            self.lineEditCreditApproval.setText( creditApproval )
+            self.lineEditReceivedPo.setText( receivedPo )
+            self.lineEditPoSigned.setText( poSigned )
+            self.lineEditAddVer.setText( addVer )
+            self.lineEditPlansRequested.setText( plansRequested )
+            self.lineEditPlansSentToDesign.setText( plansSentToDesign )
+            self.lineEditCadReq.setText( cadReq )
+            self.lineEditCadSent.setText( cadSent )
+            self.lineEditFlrSub.setText( flrSub )
+            self.lineEditFlrApp.setText( flrApp )
+            self.lineEditFlrSub.setText( rfSub )
+            self.lineEditFlrApp.setText( rfApp )
+            self.lineEditBeam.setText( beam )
+            self.lineEditHang.setText( hang )
+            self.lineEditLay.setText( lay )
+            self.textEditJobNotes.setText( jobNotes )
+            # if taxState == 'cust':
+            # self.checkBoxCusTax.setChecked(True)
+            self.inputRegionCusTax.setText( tax )
+            # print(taxState)
+
+            if payment == 'cash':
+                self.radioCash.setChecked( True )
+            if payment == 'account':
+                self.radioAcccount.setChecked( True )
+            if payment == 'check':
+                self.radioCheck.setChecked( True )
+            if payment == 'card':
+                self.radioCard.setChecked( True )
+
+            print( 'here' )
+
+
 
     # runs jobdat.py which gets the data from icommand
     def new(self):
@@ -540,21 +665,29 @@ class Form( QObject ):
         if self.radioCheck.isChecked():
             payment = 'check'
 
-        jobInfo = {'jobnumber': jobNumber, 'Job Name': jobName, 'Salesman': salesman, 'Designer': designer,
-                   'Region': region, 'Street Name': street,
-                   'Zip Code': zipCode, 'Quoted Price': quotedPrice, 'Total Price': totalPrice,
-                   'Customer Code': customerCode, 'Customer Name': customerName,
-                   'Billing Street': billingStreet, 'Billing City': billingCity, 'Billing Zip': billingZip,
-                   'Bf': totalBf, 'phonenumber': phoneNumber,
-                   'email': email, 'date': date, 'po': po, 'payment': payment, 'creditApp': creditApp,
-                   'creditApproval': creditApproval, 'receivedPo': receivedPo, 'poSigned': poSigned, 'addVer': addVer
-            , 'plansRequested': plansRequested, 'plansSentToDesign': plansSentToDesign, 'cadReq': cadReq,
-                   'cadSent': cadSent, 'flrSub': flrSub, 'flrApp': flrApp, 'rfSub': rfSub, 'rfApp': rfApp
-            , 'beam': beam, 'hang': hang, 'lay': lay, 'jobNotes': jobNotes, 'tax': tax, 'taxState': taxState}
-        pickle.dump( jobInfo, open( jobNumber, "wb" ) )
 
-        file = jobNumber
-        shutil.move( os.getcwd() + '\\' + file, os.getcwd() + '\\Jobs\\' + file )
+        try:
+
+            jobInfo = {'jobnumber': jobNumber, 'Job Name': jobName, 'Salesman': salesman, 'Designer': designer,
+                       'Region': region, 'Street Name': street,
+                       'Zip Code': zipCode, 'Quoted Price': quotedPrice, 'Total Price': totalPrice,
+                       'Customer Code': customerCode, 'Customer Name': customerName,
+                       'Billing Street': billingStreet, 'Billing City': billingCity, 'Billing Zip': billingZip,
+                       'Bf': totalBf, 'phonenumber': phoneNumber,
+                       'email': email, 'date': date, 'po': po, 'payment': payment, 'creditApp': creditApp,
+                       'creditApproval': creditApproval, 'receivedPo': receivedPo, 'poSigned': poSigned, 'addVer': addVer
+                , 'plansRequested': plansRequested, 'plansSentToDesign': plansSentToDesign, 'cadReq': cadReq,
+                       'cadSent': cadSent, 'flrSub': flrSub, 'flrApp': flrApp, 'rfSub': rfSub, 'rfApp': rfApp
+                , 'beam': beam, 'hang': hang, 'lay': lay, 'jobNotes': jobNotes, 'tax': tax, 'taxState': taxState}
+            pickle.dump( jobInfo, open( jobNumber, "wb" ) )
+
+            file = jobNumber
+            shutil.move( os.getcwd() + '\\' + file, os.getcwd() + '\\Jobs\\' + file )
+            pyautogui.alert('job saved')
+        except:
+
+            pyautogui.alert("Unknown payment type! please select paymet type.")
+
 
     # creates and xl file to print pdfs from
     def xl(self):
@@ -775,7 +908,6 @@ class Form( QObject ):
             file = jobNumber + ' Order.pdf'
             shutil.move( os.getcwd() + '\\xldocs\\' + file, 'O:\Jobs\\' + jobNumber + '\Orders\\' + file )
 
-            pyautogui.alert( 'did it work?' )
         except:
             pyautogui.alert( 'Unable to create pdf Have you Consolidated this job yet?' )
 
@@ -1478,660 +1610,15 @@ class Form( QObject ):
             }
 
         bf = bfCalcDict[bfCode]
-        totalBf = float( bf ) * float( trussNumber ) + (float( gable ) * 75)
+        totalBf = float( bf ) * float( trussNumber )
+        gables = float(gable) * (float(bf)+10)
+        totalBf += gables
         price = float( totalBf ) * float( pPerBf )
         self.lPrice.setText( str( price ) )
         self.lTotalBf.setText( str( totalBf ) + ' BF' )
 
         print( bf )
 
-    def bfEst(self):
-
-        pitch = str( self.pitch.currentText() )
-        span = str( self.span.value() )
-        gable = str( self.gable.value() )
-        trussNumber = self.trussNumber.text()
-        pPerBf = self.pPerBf.value()
-        bfCode = 'p' + pitch + 's' + span
-
-        if self.bcSize.currentText() == '2x4':
-            bfCalcDict = {
-                'p3/12s10': 15.3333,
-                'p3/12s11': 17.3333,
-                'p3/12s12': 18.6667,
-                'p3/12s13': 20,
-                'p3/12s14': 21.3333,
-                'p3/12s15': 22.6667,
-                'p3/12s16': 25.3333,
-                'p3/12s17': 30.64,
-                'p3/12s18': 33.3333,
-                'p3/12s19': 34.6667,
-                'p3/12s20': 37.3333,
-                'p3/12s21': 40,
-                'p3/12s22': 41.3333,
-                'p3/12s23': 42.6667,
-                'p3/12s24': 45.3333,
-                'p3/12s25': 48.6667,
-                'p3/12s26': 48.6667,
-                'p3/12s27': 52,
-                'p3/12s28': 54.6667,
-                'p3/12s29': 56,
-                'p3/12s30': 56,
-                'p3/12s31': 60.6667,
-                'p3/12s32': 60,
-                'p3/12s33': 68,
-                'p3/12s34': 70.6667,
-                'p3/12s35': 74.6667,
-                'p3/12s36': 86.6667,
-                'p3/12s37': 88.6667,
-                'p3/12s38': 88.6667,
-                'p3/12s39': 100.6667,
-                'p3/12s40': 99.3333,
-                'p4/12s10': 16,
-                'p4/12s11': 17.3333,
-                'p4/12s12': 18.6667,
-                'p4/12s13': 20,
-                'p4/12s14': 22,
-                'p4/12s15': 26,
-                'p4/12s16': 26,
-                'p4/12s17': 33.3333,
-                'p4/12s18': 34.6667,
-                'p4/12s19': 40,
-                'p4/12s20': 40,
-                'p4/12s21': 41.3333,
-                'p4/12s22': 41.3333,
-                'p4/12s23': 46.6667,
-                'p4/12s24': 46.6667,
-                'p4/12s25': 49.3333,
-                'p4/12s26': 52.6667,
-                'p4/12s27': 56.6667,
-                'p4/12s28': 56.6667,
-                'p4/12s29': 58,
-                'p4/12s30': 59.3333,
-                'p4/12s31': 61.3333,
-                'p4/12s32': 69.3333,
-                'p4/12s33': 74.6667,
-                'p4/12s34': 77.3333,
-                'p4/12s35': 78.6667,
-                'p4/12s36': 78.6667,
-                'p4/12s37': 81.3333,
-                'p4/12s38': 85.3333,
-                'p4/12s39': 86.6667,
-                'p4/12s40': 91.3333,
-                'p5/12s10': 16,
-                'p5/12s11': 19.3333,
-                'p5/12s12': 19.3333,
-                'p5/12s13': 22,
-                'p5/12s14': 22,
-                'p5/12s15': 26,
-                'p5/12s16': 26.6667,
-                'p5/12s17': 36,
-                'p5/12s18': 36,
-                'p5/12s19': 40,
-                'p5/12s20': 40,
-                'p5/12s21': 42.6667,
-                'p5/12s22': 45.3333,
-                'p5/12s23': 46.6667,
-                'p5/12s24': 50,
-                'p5/12s25': 52.6667,
-                'p5/12s26': 56,
-                'p5/12s27': 57.3333,
-                'p5/12s28': 57.3333,
-                'p5/12s29': 60,
-                'p5/12s30': 62.6667,
-                'p5/12s31': 64,
-                'p5/12s32': 74.6667,
-                'p5/12s33': 77.3333,
-                'p5/12s34': 81.3333,
-                'p5/12s35': 82.6667,
-                'p5/12s36': 85.3333,
-                'p5/12s37': 89.3333,
-                'p5/12s38': 90.6667,
-                'p5/12s39': 93.3333,
-                'p5/12s40': 97.3333,
-                'p6/12s10': 16.6667,
-                'p6/12s11': 19.3333,
-                'p6/12s12': 19.3333,
-                'p6/12s13': 22,
-                'p6/12s14': 22.6667,
-                'p6/12s15': 26.6667,
-                'p6/12s16': 26.6667,
-                'p6/12s17': 36,
-                'p6/12s18': 40,
-                'p6/12s19': 41.3333,
-                'p6/12s20': 41.3333,
-                'p6/12s21': 44,
-                'p6/12s22': 48,
-                'p6/12s23': 49.3333,
-                'p6/12s24': 52,
-                'p6/12s25': 57.3333,
-                'p6/12s26': 58,
-                'p6/12s27': 60.6667,
-                'p6/12s28': 60.6667,
-                'p6/12s29': 63.3333,
-                'p6/12s30': 64,
-                'p6/12s31': 70,
-                'p6/12s32': 82.6667,
-                'p6/12s33': 84,
-                'p6/12s34': 85.3333,
-                'p6/12s35': 89.3333,
-                'p6/12s36': 92,
-                'p6/12s37': 93.3333,
-                'p6/12s38': 93.3333,
-                'p6/12s39': 100,
-                'p6/12s40': 104,
-                'p7/12s10': 16.6667,
-                'p7/12s11': 19.3333,
-                'p7/12s12': 21.3333,
-                'p7/12s13': 22.6667,
-                'p7/12s14': 25.3333,
-                'p7/12s15': 27.3333,
-                'p7/12s16': 36,
-                'p7/12s17': 40,
-                'p7/12s18': 40,
-                'p7/12s19': 44,
-                'p7/12s20': 44,
-                'p7/12s21': 48,
-                'p7/12s22': 49.3333,
-                'p7/12s23': 50.6667,
-                'p7/12s24': 56.6667,
-                'p7/12s25': 58.6667,
-                'p7/12s26': 60,
-                'p7/12s27': 61.3333,
-                'p7/12s28': 64,
-                'p7/12s29': 66.6667,
-                'p7/12s30': 72,
-                'p7/12s31': 86.6667,
-                'p7/12s32': 86.6667,
-                'p7/12s33': 88,
-                'p7/12s34': 90.6667,
-                'p7/12s35': 98.6667,
-                'p7/12s36': 98.6667,
-                'p7/12s37': 100,
-                'p7/12s38': 102.6667,
-                'p7/12s39': 106.6667,
-                'p7/12s40': 106.6667,
-                'p8/12s10': 18.6667,
-                'p8/12s11': 20,
-                'p8/12s12': 21.3333,
-                'p8/12s13': 26,
-                'p8/12s14': 26,
-                'p8/12s15': 27.3333,
-                'p8/12s16': 36,
-                'p8/12s17': 42.6667,
-                'p8/12s18': 42.6667,
-                'p8/12s19': 44,
-                'p8/12s20': 48,
-                'p8/12s21': 49.3333,
-                'p8/12s22': 49.3333,
-                'p8/12s23': 57.3333,
-                'p8/12s24': 57.3333,
-                'p8/12s25': 62.6667,
-                'p8/12s26': 62.6667,
-                'p8/12s27': 65.3333,
-                'p8/12s28': 68,
-                'p8/12s29': 70.6667,
-                'p8/12s30': 73.3333,
-                'p8/12s31': 90.6667,
-                'p8/12s32': 90.6667,
-                'p8/12s33': 97.3333,
-                'p8/12s34': 97.3333,
-                'p8/12s35': 102.6667,
-                'p8/12s36': 117.3333,
-                'p8/12s37': 121.3333,
-                'p8/12s38': 124,
-                'p8/12s39': 126.6667,
-                'p8/12s40': 130.6667,
-                'p9/12s10': 18.6667,
-                'p9/12s11': 21.3333,
-                'p9/12s12': 22,
-                'p9/12s13': 26,
-                'p9/12s14': 26,
-                'p9/12s15': 28,
-                'p9/12s16': 41.3333,
-                'p9/12s17': 42.6667,
-                'p9/12s18': 44,
-                'p9/12s19': 48,
-                'p9/12s20': 48,
-                'p9/12s21': 53.3333,
-                'p9/12s22': 53.3333,
-                'p9/12s23': 57.3333,
-                'p9/12s24': 61.3333,
-                'p9/12s25': 62.6667,
-                'p9/12s26': 64,
-                'p9/12s27': 72,
-                'p9/12s28': 72,
-                'p9/12s29': 76,
-                'p9/12s30': 76,
-                'p9/12s31': 92,
-                'p9/12s32': 102.6667,
-                'p9/12s33': 116,
-                'p9/12s34': 118.6667,
-                'p9/12s35': 122.6667,
-                'p9/12s36': 125.3334,
-                'p9/12s37': 129.3334,
-                'p9/12s38': 130.6666,
-                'p9/12s39': 150,
-                'p9/12s40': 154.6666,
-                'p10/12s10': 18.6667,
-                'p10/12s11': 22,
-                'p10/12s12': 24.6667,
-                'p10/12s13': 26.6667,
-                'p10/12s14': 26.6667,
-                'p10/12s15': 30.6667,
-                'p10/12s16': 41.3333,
-                'p10/12s17': 44,
-                'p10/12s18': 44,
-                'p10/12s19': 52,
-                'p10/12s20': 52,
-                'p10/12s21': 53.3333,
-                'p10/12s22': 56,
-                'p10/12s23': 61.3333,
-                'p10/12s24': 61.3333,
-                'p10/12s25': 66.6667,
-                'p10/12s26': 72,
-                'p10/12s27': 72,
-                'p10/12s28': 74.6667,
-                'p10/12s29': 141.3333,
-                'p10/12s30': 98,
-                'p10/12s31': 100.6667,
-                'p10/12s32': 103.3334,
-                'p10/12s33': 107.3333,
-                'p10/12s34': 110,
-                'p10/12s35': 114,
-                'p10/12s36': 130.6667,
-                'p10/12s37': 140,
-                'p10/12s38': 142.6667,
-                'p10/12s39': 145.3333,
-                'p10/12s40': 148.6667,
-                'p11/12s10': 20.6667,
-                'p11/12s11': 22,
-                'p11/12s12': 25.3333,
-                'p11/12s13': 26.6667,
-                'p11/12s14': 27.3333,
-                'p11/12s15': 31.3333,
-                'p11/12s16': 42.6667,
-                'p11/12s17': 48,
-                'p11/12s18': 50.6667,
-                'p11/12s19': 52,
-                'p11/12s20': 52,
-                'p11/12s21': 57.3333,
-                'p11/12s22': 60,
-                'p11/12s23': 61.3333,
-                'p11/12s24': 65.3333,
-                'p11/12s25': 72,
-                'p11/12s26': 70.6667,
-                'p11/12s27': 92,
-                'p11/12s28': 94.6667,
-                'p11/12s29': 98.6667,
-                'p11/12s30': 102.6667,
-                'p11/12s31': 106.6667,
-                'p11/12s32': 109.3334,
-                'p11/12s33': 126.6666,
-                'p11/12s34': 132.6666,
-                'p11/12s35': 139.3334,
-                'p11/12s36': 140,
-                'p11/12s37': 144,
-                'p11/12s38': 150,
-                'p11/12s39': 152.6667,
-                'p11/12s40': 154.6667,
-                'p12/12s10': 20.6667,
-                'p12/12s11': 25.3333,
-                'p12/12s12': 25.3333,
-                'p12/12s13': 27.3333,
-                'p12/12s14': 30,
-                'p12/12s15': 32,
-                'p12/12s16': 46.6667,
-                'p12/12s17': 50.6667,
-                'p12/12s18': 50.6667,
-                'p12/12s19': 52,
-                'p12/12s20': 58.6667,
-                'p12/12s21': 60,
-                'p12/12s22': 60,
-                'p12/12s23': 62.6667,
-                'p12/12s24': 72,
-                'p12/12s25': 86,
-                'p12/12s26': 88.6667,
-                'p12/12s27': 92.6667,
-                'p12/12s28': 96.6667,
-                'p12/12s29': 99.3334,
-                'p12/12s30': 103.3334,
-                'p12/12s31': 121.3334,
-                'p12/12s32': 126.6666,
-                'p12/12s33': 134,
-                'p12/12s34': 136.6667,
-                'p12/12s35': 142,
-                'p12/12s36': 144,
-                'p12/12s37': 147.3333,
-                'p12/12s38': 150,
-                'p12/12s39': 172.6667,
-                'p12/12s40': 188.6667,
-
-            }
-
-        if self.bcSize.currentText() == '2x6':
-
-            bfCalcDict = {
-
-                'p3/12s10': 18,
-                'p3/12s11': 20,
-                'p3/12s12': 22.6667,
-                'p3/12s13': 24.6667,
-                'p3/12s14': 26,
-                'p3/12s15': 28,
-                'p3/12s16': 30.6667,
-                'p3/12s17': 38,
-                'p3/12s18': 39.3333,
-                'p3/12s19': 41.6667,
-                'p3/12s20': 44,
-                'p3/12s21': 46,
-                'p3/12s22': 47.3333,
-                'p3/12s23': 50.6667,
-                'p3/12s24': 53.3333,
-                'p3/12s25': 55.3333,
-                'p3/12s26': 55.3333,
-                'p3/12s27': 57.3333,
-                'p3/12s28': 64,
-                'p3/12s29': 66,
-                'p3/12s30': 66,
-                'p3/12s31': 69.6667,
-                'p3/12s32': 72,
-                'p3/12s33': 74,
-                'p3/12s34': 79.3333,
-                'p3/12s35': 84,
-                'p3/12s36': 86.6667,
-                'p3/12s37': 88.6667,
-                'p3/12s38': 88.6667,
-                'p3/12s39': 110,
-                'p3/12s40': 122,
-                'p4/12s10': 18,
-                'p4/12s11': 21.3333,
-                'p4/12s12': 22.6667,
-                'p4/12s13': 24.6667,
-                'p4/12s14': 26,
-                'p4/12s15': 31.3333,
-                'p4/12s16': 31.3333,
-                'p4/12s17': 39.3333,
-                'p4/12s18': 39.3333,
-                'p4/12s19': 45.3333,
-                'p4/12s20': 46.6667,
-                'p4/12s21': 48.6667,
-                'p4/12s22': 48.6667,
-                'p4/12s23': 53.3333,
-                'p4/12s24': 54.6667,
-                'p4/12s25': 56.6667,
-                'p4/12s26': 56.6667,
-                'p4/12s27': 66,
-                'p4/12s28': 66,
-                'p4/12s29': 68,
-                'p4/12s30': 68,
-                'p4/12s31': 73,
-                'p4/12s32': 72.6667,
-                'p4/12s33': 82,
-                'p4/12s34': 86,
-                'p4/12s35': 90.6667,
-                'p4/12s36': 90.6667,
-                'p4/12s37': 92.6667,
-                'p4/12s38': 96.6667,
-                'p4/12s39': 100,
-                'p4/12s40': 100,
-                'p5/12s10': 18,
-                'p5/12s11': 22.6667,
-                'p5/12s12': 23.3333,
-                'p5/12s13': 26.6667,
-                'p5/12s14': 26.6667,
-                'p5/12s15': 31.3333,
-                'p5/12s16': 31.3333,
-                'p5/12s17': 40.6667,
-                'p5/12s18': 42,
-                'p5/12s19': 46.6667,
-                'p5/12s20': 46.6667,
-                'p5/12s21': 50,
-                'p5/12s22': 52.6667,
-                'p5/12s23': 54.6667,
-                'p5/12s24': 54.6667,
-                'p5/12s25': 59.3333,
-                'p5/12s26': 62,
-                'p5/12s27': 66.6667,
-                'p5/12s28': 66.6667,
-                'p5/12s29': 70,
-                'p5/12s30': 71.3333,
-                'p5/12s31': 74.3333,
-                'p5/12s32': 78,
-                'p5/12s33': 85.3333,
-                'p5/12s34': 88,
-                'p5/12s35': 94.6667,
-                'p5/12s36': 94.6667,
-                'p5/12s37': 102,
-                'p5/12s38': 102,
-                'p5/12s39': 105.3333,
-                'p5/12s40': 105.3333,
-                'p6/12s10': 20,
-                'p6/12s11': 23.3333,
-                'p6/12s12': 23.3333,
-                'p6/12s13': 26.6667,
-                'p6/12s14': 27.3333,
-                'p6/12s15': 32,
-                'p6/12s16': 32,
-                'p6/12s17': 42,
-                'p6/12s18': 44.6667,
-                'p6/12s19': 48,
-                'p6/12s20': 48,
-                'p6/12s21': 50,
-                'p6/12s22': 55.3333,
-                'p6/12s23': 57.3333,
-                'p6/12s24': 57.3333,
-                'p6/12s25': 62,
-                'p6/12s26': 66.6667,
-                'p6/12s27': 68.6667,
-                'p6/12s28': 70,
-                'p6/12s29': 73.3333,
-                'p6/12s30': 74,
-                'p6/12s31': 77.6667,
-                'p6/12s32': 88,
-                'p6/12s33': 90,
-                'p6/12s34': 95.3333,
-                'p6/12s35': 98.6667,
-                'p6/12s36': 104,
-                'p6/12s37': 106,
-                'p6/12s38': 106,
-                'p6/12s39': 110.6667,
-                'p6/12s40': 116,
-                'p7/12s10': 20,
-                'p7/12s11': 23.3333,
-                'p7/12s12': 25.3333,
-                'p7/12s13': 27.3333,
-                'p7/12s14': 30,
-                'p7/12s15': 32,
-                'p7/12s16': 32.6667,
-                'p7/12s17': 46,
-                'p7/12s18': 46,
-                'p7/12s19': 48,
-                'p7/12s20': 50.6667,
-                'p7/12s21': 55.3333,
-                'p7/12s22': 55.3333,
-                'p7/12s23': 58.6667,
-                'p7/12s24': 61.3333,
-                'p7/12s25': 63.3333,
-                'p7/12s26': 67.3333,
-                'p7/12s27': 70.6667,
-                'p7/12s28': 72,
-                'p7/12s29': 76.6667,
-                'p7/12s30': 82,
-                'p7/12s31': 84.3333,
-                'p7/12s32': 90.6667,
-                'p7/12s33': 94,
-                'p7/12s34': 102,
-                'p7/12s35': 106.6667,
-                'p7/12s36': 110.6667,
-                'p7/12s37': 112.6667,
-                'p7/12s38': 115.3333,
-                'p7/12s39': 117.3333,
-                'p7/12s40': 117.3333,
-                'p8/12s10': 21.3333,
-                'p8/12s11': 24,
-                'p8/12s12': 25.3333,
-                'p8/12s13': 30,
-                'p8/12s14': 30.6667,
-                'p8/12s15': 32.6667,
-                'p8/12s16': 32.6667,
-                'p8/12s17': 46,
-                'p8/12s18': 48.6667,
-                'p8/12s19': 50.6667,
-                'p8/12s20': 53.3333,
-                'p8/12s21': 56.6667,
-                'p8/12s22': 56.6667,
-                'p8/12s23': 65.3333,
-                'p8/12s24': 65.3333,
-                'p8/12s25': 67.3333,
-                'p8/12s26': 71.3333,
-                'p8/12s27': 74.6667,
-                'p8/12s28': 77.3333,
-                'p8/12s29': 82,
-                'p8/12s30': 83.3333,
-                'p8/12s31': 85.6667,
-                'p8/12s32': 97.3333,
-                'p8/12s33': 102,
-                'p8/12s34': 108.6667,
-                'p8/12s35': 112,
-                'p8/12s36': 129.3333,
-                'p8/12s37': 135.3333,
-                'p8/12s38': 138,
-                'p8/12s39': 141.3333,
-                'p8/12s40': 145.3333,
-                'p9/12s10': 22,
-                'p9/12s11': 25.3333,
-                'p9/12s12': 26,
-                'p9/12s13': 30.6667,
-                'p9/12s14': 30.6667,
-                'p9/12s15': 33.3333,
-                'p9/12s16': 36,
-                'p9/12s17': 48.6667,
-                'p9/12s18': 48.6667,
-                'p9/12s19': 54.6667,
-                'p9/12s20': 54.6667,
-                'p9/12s21': 60.6667,
-                'p9/12s22': 60.6667,
-                'p9/12s23': 65.3333,
-                'p9/12s24': 65.3333,
-                'p9/12s25': 67.3333,
-                'p9/12s26': 72.6667,
-                'p9/12s27': 77.3333,
-                'p9/12s28': 82.6667,
-                'p9/12s29': 86,
-                'p9/12s30': 86,
-                'p9/12s31': 87,
-                'p9/12s32': 102.6667,
-                'p9/12s33': 111.3333,
-                'p9/12s34': 114,
-                'p9/12s35': 117.3333,
-                'p9/12s36': 121.3333,
-                'p9/12s37': 124.6667,
-                'p9/12s38': 127.3334,
-                'p9/12s39': 147.3334,
-                'p9/12s40': 148,
-                'p10/12s10': 22,
-                'p10/12s11': 26,
-                'p10/12s12': 28.6667,
-                'p10/12s13': 30.6667,
-                'p10/12s14': 31.3333,
-                'p10/12s15': 36,
-                'p10/12s16': 36.6667,
-                'p10/12s17': 50,
-                'p10/12s18': 50,
-                'p10/12s19': 58.6667,
-                'p10/12s20': 58.6667,
-                'p10/12s21': 60.6667,
-                'p10/12s22': 63.3333,
-                'p10/12s23': 65.3333,
-                'p10/12s24': 69.3333,
-                'p10/12s25': 72.6667,
-                'p10/12s26': 78,
-                'p10/12s27': 81.3333,
-                'p10/12s28': 84,
-                'p10/12s29': 106.6667,
-                'p10/12s30': 109.3333,
-                'p10/12s31': 112.6667,
-                'p10/12s32': 115.3334,
-                'p10/12s33': 121.3334,
-                'p10/12s34': 122.6666,
-                'p10/12s35': 127.3333,
-                'p10/12s36': 148.6667,
-                'p10/12s37': 150.6667,
-                'p10/12s38': 136,
-                'p10/12s39': 159.3333,
-                'p10/12s40': 164,
-                'p11/12s10': 24,
-                'p11/12s11': 26,
-                'p11/12s12': 29.3333,
-                'p11/12s13': 31.3333,
-                'p11/12s14': 31.3333,
-                'p11/12s15': 36.6667,
-                'p11/12s16': 44.6667,
-                'p11/12s17': 50,
-                'p11/12s18': 56.6667,
-                'p11/12s19': 58.6667,
-                'p11/12s20': 58.6667,
-                'p11/12s21': 63.3333,
-                'p11/12s22': 67.3333,
-                'p11/12s23': 69.3333,
-                'p11/12s24': 70.6667,
-                'p11/12s25': 80.6667,
-                'p11/12s26': 79.3333,
-                'p11/12s27': 102.6666,
-                'p11/12s28': 105.3333,
-                'p11/12s29': 108.6667,
-                'p11/12s30': 111.3333,
-                'p11/12s31': 117.3333,
-                'p11/12s32': 118.6667,
-                'p11/12s33': 138,
-                'p11/12s34': 141.3334,
-                'p11/12s35': 150,
-                'p11/12s36': 153.3334,
-                'p11/12s37': 159.3334,
-                'p11/12s38': 161.3333,
-                'p11/12s39': 164.6667,
-                'p11/12s40': 169.3333,
-                'p12/12s10': 24,
-                'p12/12s11': 29.3333,
-                'p12/12s12': 29.3333,
-                'p12/12s13': 32,
-                'p12/12s14': 34.6667,
-                'p12/12s15': 37.3333,
-                'p12/12s16': 45.3333,
-                'p12/12s17': 56.6667,
-                'p12/12s18': 56.6667,
-                'p12/12s19': 58.6667,
-                'p12/12s20': 65.3333,
-                'p12/12s21': 67.3333,
-                'p12/12s22': 67.3333,
-                'p12/12s23': 70.6667,
-                'p12/12s24': 77.3333,
-                'p12/12s25': 96,
-                'p12/12s26': 98.6666,
-                'p12/12s27': 102,
-                'p12/12s28': 106,
-                'p12/12s29': 110.6667,
-                'p12/12s30': 113.3333,
-                'p12/12s31': 130.3334,
-                'p12/12s32': 134.6667,
-                'p12/12s33': 145.3334,
-                'p12/12s34': 146.6667,
-                'p12/12s35': 152.3333,
-                'p12/12s36': 154.6666,
-                'p12/12s37': 158.6666,
-                'p12/12s38': 162.6667,
-                'p12/12s39': 184,
-                'p12/12s40': 202.6666
-            }
-
-        bf = bfCalcDict[bfCode]
-        totalBf = float( bf ) * float( trussNumber ) + (float( gable ) * 75)
-        price = float( totalBf ) * float( pPerBf )
-        self.lPrice.setText( str( price ) )
-        self.lTotalBf.setText( str( totalBf ) + ' BF' )
-
-        print( bf )
 
     def tax(self):
 
@@ -2139,51 +1626,62 @@ class Form( QObject ):
 
         if self.checkBoxCusTax.isChecked():
             tax = float( self.inputRegionCusTax.text() )
+            quotedPrice = re.sub( '[!@#$,]', '', quotedPrice )
             quotedPrice = float( quotedPrice )
             taxCal = tax / 100
             totalWithTax = (quotedPrice * taxCal) + quotedPrice
             self.taxRate.setText( 'Tax Rate: ' + str( tax ) + '%' )
             self.inputTotalPrice.setText( str( totalWithTax ) )
+            zipCode = self.inputZipCode.text()
+
+
+            search = SearchEngine( simple_zipcode=True )
+            zipcode = search.by_zipcode( zipCode )
+
+
+            zipcodecity = zipcode.common_city_list
+
+
+            self.shippingCity.clear()
+
+
+
+            self.shippingCity.addItems( zipcodecity )
+
+            zip_region = zipcode.state
+            self.inputRegion.setText(zip_region)
 
         if self.checkBoxCusTax.isChecked() == False:
 
             print( 'start' )
-            client = taxjar.Client( api_key='b945f7cd7180bf57e187f91e84cf76e0' )
+
+
 
             zipCode = self.inputZipCode.text()
-            city = self.shippingCity.currentText()
-            street = self.inputStreetName.text()
 
-            rates = client.rates_for_location( zipCode, {'city': city, 'street': street} )
 
-            tax = rates['combined_rate']
-
-            tax = tax * 100
-
-            tax = round( tax, 2 )
             search = SearchEngine( simple_zipcode=True )
             zipcode = search.by_zipcode( zipCode )
-            print( 'end4' )
+
 
             zipcodecity = zipcode.common_city_list
-            print( 'end3' )
+
 
             self.shippingCity.clear()
-            print( 'end2' )
+
 
             self.shippingCity.addItems( zipcodecity )
-            print( 'end1' )
 
-            self.taxRate.setText( 'Tax Rate: ' + str( tax ) + '%' )
-            self.inputRegionCusTax.setText( str( tax ) )
+            zip_region = zipcode.state
+            self.inputRegion.setText( zip_region )
+
 
             quotedPrice = re.sub( '[!@#$,]', '', quotedPrice )
             quotedPrice = float( quotedPrice )
+            totalWithTax = quotedPrice
 
-            taxCal = tax / 100
-            totalWithTax = (quotedPrice * taxCal) + quotedPrice
 
-            pass
+
 
         if self.taxFree.isChecked():
             totalWithTax = quotedPrice
@@ -2393,7 +1891,7 @@ class Form( QObject ):
             self.inputEmail.setText( email )
         except:
             print( 'nocust' )
-            self.load()
+            # self.load()
 
     def saveCustAct(self):
         customerCode = self.inputCustomerCode.text()
@@ -2507,7 +2005,6 @@ class Form( QObject ):
         self.w.show()
 
 
-# TODO Feature : Job statue
 
 
 # TODO Feature : Archive
